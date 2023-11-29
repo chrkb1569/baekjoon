@@ -1,36 +1,46 @@
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.util.Arrays;
+import java.util.StringTokenizer;
 
 public class LIS_3 {
-    public static long[] resultArr;
-    public static long[] dpArr;
+    private static int[] resultArr;
+    private static int[] dpArr;
 
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
         int N = Integer.parseInt(br.readLine());
+        StringTokenizer st = new StringTokenizer(br.readLine(), " ");
 
         initArr(N);
+        mkResultArr(st);
+        mkDpArr();
 
-        String[] infoArr = br.readLine().split(" ");
-
-        mkResultArr(infoArr);
-        System.out.println(getDpResult());
+        int validateLength = getValidateLength();
+        System.out.println(validateLength);
     }
 
-    public static void initArr(int length) {
-        resultArr = new long[length];
-        dpArr = new long[length];
+    private static void initArr(int length) {
+        resultArr = new int[length];
+        dpArr = new int[length];
     }
 
-    public static void mkResultArr(String[] infoArr) {
-        for(int i = 0; i < resultArr.length; i++) {
-            resultArr[i] = Integer.parseInt(infoArr[i]);
+    private static void mkResultArr(StringTokenizer st) {
+        int indexValue = 0;
+
+        for(;st.hasMoreTokens();) {
+            resultArr[indexValue++] = Integer.parseInt(st.nextToken());
         }
     }
 
-    public static int getDpResult() {
+    private static void mkDpArr() {
         int length = 0;
+
+        Arrays.fill(dpArr, Integer.MIN_VALUE);
 
         for(int i = 0; i < dpArr.length; i++) {
             int index = binarySearch(resultArr[i], 0, length, length + 1);
@@ -41,11 +51,9 @@ public class LIS_3 {
             }
             dpArr[index] = resultArr[i];
         }
-
-        return length == 0? 1 : length;
     }
 
-    public static int binarySearch(long value, int start, int end, int size) {
+    private static int binarySearch(int value, int start, int end, int size) {
         int index = 0;
 
         while(start <= end) {
@@ -56,11 +64,24 @@ public class LIS_3 {
                 end = mid - 1;
                 continue;
             }
+
             start = mid + 1;
         }
 
-        if(start == size) return -1;
+        if(start == size) {
+            return -1;
+        }
 
         return index;
+    }
+
+    private static int getValidateLength() {
+        int length = 0;
+
+        for(int value : dpArr) {
+            if(value != Integer.MIN_VALUE) length++;
+        }
+
+        return length;
     }
 }
