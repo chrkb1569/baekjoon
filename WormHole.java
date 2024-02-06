@@ -8,6 +8,7 @@ import java.util.StringTokenizer;
 public class WormHole {
     private static List<List<Link>> resultList;
     private static int[] costArr;
+    private static int MAX_VALUE = 1_000_000_000;
 
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -54,7 +55,7 @@ public class WormHole {
     private static void initCostArr(int length) {
         costArr = new int[length + 1];
 
-        Arrays.fill(costArr, Integer.MAX_VALUE);
+        Arrays.fill(costArr, MAX_VALUE);
     }
 
     private static void mkResultList(StringTokenizer st) {
@@ -75,15 +76,12 @@ public class WormHole {
     }
 
     private static String getResultString() {
-        for(int index = 1; index < costArr.length; index++) {
-            if(checkValidation(index)) return "YES";
-        }
-
+        if(checkValidation()) return "YES";
         return "NO";
     }
 
-    private static boolean checkValidation(int startIndex) {
-        costArr[startIndex] = 0;
+    private static boolean checkValidation() {
+        costArr[1] = 0;
         boolean flag = false;
 
         for(int i = 1; i < costArr.length - 1; i++) {
@@ -96,7 +94,7 @@ public class WormHole {
                     int nextLocation = link.getTo();
                     int reqWeight = link.getWeight();
 
-                    if(costArr[currentIndex] != Integer.MAX_VALUE && costArr[nextLocation] > weight + reqWeight) {
+                    if(costArr[nextLocation] > weight + reqWeight) {
                         costArr[nextLocation] = weight + reqWeight;
                         flag = true;
                     }
@@ -114,7 +112,7 @@ public class WormHole {
                     int nextLocation = link.getTo();
                     int reqWeight = link.getWeight();
 
-                    if(weight != Integer.MAX_VALUE && costArr[nextLocation] > weight + reqWeight) return true;
+                    if(costArr[nextLocation] > weight + reqWeight) return true;
                 }
             }
         }
